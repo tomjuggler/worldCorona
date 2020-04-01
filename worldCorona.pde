@@ -1,28 +1,29 @@
 import http.requests.*;
-JSONArray values;
-JSONObject corona;
+JSONObject latest;
+JSONObject locations;
 String[] countries = {"ZA", "GB", "US"};
+int[] data = {0, 0, 0};
+
 public void setup() 
 {
-	size(480,640);
-surface.setTitle("CORONAVIRUS STATS");
-	smooth();
-background(0);
-for(int i = 0; i < countries.length; i++){
-  GetRequest get3 = new GetRequest("http://thevirustracker.com/free-api?countryTotal=" + countries[i]); 
-  //GetRequest get3 = new GetRequest("http://thevirustracker.com/free-api?countryNewsTotal=" + countries[i]);
-  get3.send(); // program will wait untill the request is completed
-  //println("response: " + get3.getContent());
-  corona = parseJSONObject(get3.getContent()); 
-    //println(corona);
-    values = corona.getJSONArray("countrydata");
-   JSONObject valueObj = values.getJSONObject(0);
-   
-    int total = valueObj.getInt("total_cases");
-    println(countries[i] + ": " + total);
-}
+  size(480, 640);
+  surface.setTitle("CORONAVIRUS STATS");
+  smooth();
+  background(0);
+  for (int i = 0; i < countries.length; i++) {
+    GetRequest get3 = new GetRequest("https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=jhu&country_code=" + countries[i]);
+    get3.send(); // program will wait untill the request is completed
+    //println("response: " + get3.getContent());
+    locations = parseJSONObject(get3.getContent()); 
+    //println(locations);
+    latest = locations.getJSONObject("latest");
+    //println(latest);
+    data[i] = latest.getInt("confirmed");
+  }
+  for (int i = 0; i < countries.length; i++) {
+    println(countries[i] + ": " + data[i]);
+  }
 }
 
-public void draw(){
-  
+public void draw() {
 }
